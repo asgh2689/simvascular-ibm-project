@@ -1,2 +1,2 @@
 # simvascular-ibm-project
-Trying to applying the immersed boundary method (IBM) to SimVascular using fluid-structure interactions (FSI).
+Can we use the immersed boundary method (IBM) to handle fluid-structure interactions (FSI) in SimVascular? That's what this project is trying to do!
