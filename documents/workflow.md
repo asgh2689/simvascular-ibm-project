@@ -2,37 +2,13 @@
 
 ## Current SimVascular Workflow
 
-Medical Imaging (CTA/MRA) ->
-
-Image Segmentation ->
-
-Geometry Construction ->
-
-Mesh Generation ->
-
-CFD Simulation ->
- 
-Post-Processing
+Medical Imaging (CTA/MRA) -> Image Segmentation -> Geometry Construction -> Mesh Generation -> CFD Simulation -> Post-Processing
 
 ---
 
 ## Potential IBM-Based Workflow
 
-Medical Imaging (CTA/MRA) ->
-
-Image Segmentation ->
-
-Geometry Construction ->
-
-Lagrangian Boundary Representation ->
-
-Eulerian Fluid Grid ->
-
-Immersed Boundary Coupling ->
-
-Fluid-Structure Interaction Simulation ->
-
-Post-Processing 
+Medical Imaging (CTA/MRA) -> Image Segmentation -> Geometry Construction -> Lagrangian Boundary Representation -> Eulerian Fluid Grid -> Immersed Boundary Coupling -> Fluid-Structure Interaction Simulation -> Post-Processing 
 
 ---
 
