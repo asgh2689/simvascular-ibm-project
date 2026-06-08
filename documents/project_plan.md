@@ -37,9 +37,3 @@
 * Prototype a basic IBM framework
 * Explore moving-boundary cardiovascular simulations
 * Evaluate feasibility for future SimVascular development
-
----
-
-## Current Status
-
-Active literature review and project planning.
