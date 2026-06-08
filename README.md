@@ -10,13 +10,13 @@ I used SimVascular quite a bit during graduate school, but it was unable to hand
 
 ## Project Goals
 
-- Study IBM formulations
+- Develop an understanding of the immersed boundary method
 - Review existing FSI approaches
-- Evaluate compatibility with SimVascular workflows
-- Develop prototype implementations
+- Evaluate compatibility with SimVascular
+- Develop a prototype implementation
 
 ## Current Status
 
-Project planning and literature review phase.
+Project planning and literature review.
 
 Implementation has not yet begun.
