@@ -8,7 +8,8 @@ Medical Imaging (CTA/MRA) -> Image Segmentation -> Geometry Construction -> Mesh
 
 ## Potential IBM-Based Workflow
 
-Medical Imaging (CTA/MRA) -> Image Segmentation -> Geometry Construction -> Lagrangian Boundary Representation -> Eulerian Fluid Grid -> Immersed Boundary Coupling -> Fluid-Structure Interaction Simulation -> Post-Processing 
+Medical Imaging (CTA/MRA) -> Image Segmentation -> Geometry Construction -> Lagrangian Boundary Representation -> 
+Eulerian Fluid Grid -> Immersed Boundary Coupling -> Fluid-Structure Interaction Simulation -> Post-Processing 
 
 ---
 
