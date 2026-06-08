@@ -6,7 +6,7 @@ Can we use the immersed boundary method (IBM) to handle fluid-structure interact
 
 ## Motivation
 
-I used SimVascular quite a bit during graduate school, but it was unable to handle complex geometries (such as a patient with an aortic valve). I asked myself, could we fix this problem in SimVascular?
+During graduate school I used SimVascular quite a bit, but it was unable to handle complex geometries (such as a patient with an aortic valve). I asked myself, could we fix this problem in SimVascular?
 
 ## Project Goals
 
@@ -18,5 +18,3 @@ I used SimVascular quite a bit during graduate school, but it was unable to hand
 ## Current Status
 
 Project planning and literature review.
-
-Implementation has not yet begun.
