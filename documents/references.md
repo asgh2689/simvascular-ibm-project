@@ -9,3 +9,6 @@
 ## Immersed Boundary Methods
 
 * Verzicco, R., de Tullio, M. D., Viola, F. (2025). An Introduction to Immersed Boundary Methods. Singapore: Cambridge University Press.
+
+* Peskin, C. S. (2002). The immersed boundary method. Acta Numerica, 11, 479–517. doi:10.1017/S0962492902000077
+
