@@ -1,0 +1,127 @@
+'''
+Initialize Simulation Domain & Parameters
+ ├──► Define grid coordinates (global_nodes)
+ ├──► Define node types (check_wall: True = wall, False = fluid)
+ ├──► Set starting velocities (global_velocities)
+ ├──► Setup mesh connectivity (connecting_nodes triangles)
+ └──► Set constants (Valve Force 'fp', Time Step 'dt', Starting Position 'xp, yp')
+
+Start: Loop through time steps (frames 1 to 5):
+       ├──► 1. Set target vector (vector_b) using current valve position
+       ├──► 2. Search triangles (loop through connecting_nodes):
+       │     ├──► Extract active triangle coordinates & velocities
+       │     ├──► Build geometric system matrix (matrix_a)
+       │     ├──► Calculate Barycentric Proximity Weights (shape_function)
+       │     └──► Is the valve point localized inside this triangle? (All weights >= 0)
+       │           ├──► No: Pass and search the remaining triangles
+       │           └──► Yes: Use FSI
+       │                 ├──► Loop through local corners (j = 0, 1, 2):
+       │                 │     ├──► Find global node (node_index)
+       │                 │     └──► Is it an aorta wall?
+       │                 │           ├──► Yes: Force velocity set to [0.0, 0.0] (rigid)
+       │                 │           └──► No: Scatter fluid
+       │                 ├──► Calculate valve velocity from updated fluid grid (Gather)
+       │                 └──► BREAK out of triangle loop (Search complete for this frame)
+       └──► 3. Update valve coordinates (xp, yp) for the next frame using dt
+'''
+
+import numpy as np
+
+#Fluid domain (eulerian mesh). 4x2 matrix which contains spatial coordinates of a 4-node grid. Row 0 = node 0 (0,0), row 1 = node 1 (2.0, 0.0)
+global_nodes = np.array([
+    [0.0, 0.0],  
+    [2.0, 0.0],  
+    [2.0, 2.0],
+    [0.0, 2.0]   
+])
+
+#Uses global node positions to define walls. Nodes 0 and 1 are not walls
+check_wall = [False, False, True, True]
+
+#Matching 4x2 matric containing background fluid velocities at the nodes of the eulerian mesh. Column 0 = horizontal speed, u, column 1 = vertical speed, v
+#Nodes 2 and 3 start at 0 because they are at the walls
+global_velocities = np.array([
+    [1.0, 2.0],  
+    [2.0, 1.0],  
+    [0.0, 0.0],
+    [0.0, 0.0]   
+])
+
+#Defines how our nodes link together to form discrete finite elements, which are triangles
+#The program doesnt know Node 0, 1, and 2 form a shape and we need to tell the program certain node combinations create shapes (triangles in this case)
+connecting_nodes = np.array([
+    [0, 1, 2],
+    [0, 2, 3]
+])
+
+#Downward force vector exerted by valve
+fp = np.array([0.0, -5.0]) 
+
+#Time step
+dt = 0.1
+
+#Number of frames
+frame_steps = 5
+
+#Lagrangian coordinates (valve node). Could be any point on the grid  (dynamic)
+xp, yp = 1.0, 0.5
+
+#Loop through frames
+for steps in range(frame_steps):
+
+    #Constructs vector b for geometric interpolation equation. To solve for our weights, we need to know our target states against element corners.
+    #Final number is 1 to solve N0​+N1​+N2​=1. 
+    vector_b = np.array([
+        xp, yp, 1
+    ])
+
+    #Accumulate the spread forces assigned to individual fluid nodes
+    force_vectors = []
+
+    #This section finds where the valve is and what forces are being exerted by the valve
+    for i in connecting_nodes:
+
+        #Extracts data for active triangle
+        coordinates = global_nodes[i]
+        velocities = global_velocities[i]
+
+        #Transpose to create a 2x3 matrix to solve our linear system of equations. Row 1, x coodtinates, row 2, y coordinates
+        matrix_a = np.transpose(coordinates)
+
+        #Turns matrix into 3x3. Represents the algebraic coefficients for total weight rule: 1N0​+1N1​+1N2​ = 1
+        matrix_a = np.vstack((matrix_a, [1,1,1]))
+
+        #Solves linear system AN=b and outputs N=[N0​,N1​,N2​] which are the Barycentric weights
+        #The numbers tell us what percentage of proximity the valve point shares with each of the three corner nodes
+        shape_function = np.linalg.solve(matrix_a, vector_b) #N, interpolation weights
+
+        #If a point sits outside a triangle, at least one weight will be negative
+        #If all weights are positive, the valve point is localized inside this specific triangle
+        if np.all(shape_function >= 0):
+            
+            #Steps through global nodes (i) and determines local identity (j). 
+            #Example: [0, 1, 3], Triangle 0 (made of global nodes 0, 2, and 4). When j=0: i[0] looks at position 0 of [0, 1, 3] and node_index becomes 0
+            #When j=1: i[1] looks at position 1 of [0, 1, 3] and node_index becomes 2
+            for j in range(3):
+                node_index = i[j]
+
+            #Check if the node index is a wall or not. If it is, keep it in place
+                if check_wall[node_index] == True:
+                    global_velocities[node_index] = np.array([0.0, 0.0])
+                else:
+                    #Multiplies an element's geometric weight (shape_function[j]) by force vector (fp) and stores result
+                    force = shape_function[j] * fp
+                    force_vectors.append(force)
+                    
+                    #Acts as a solid structure (valve) which resists fluid
+                    global_velocities[node_index] += force * 0.05
+
+            #Calculates fluid velocity at valve point
+            valve_point_velocity = np.dot(shape_function, global_velocities[i])
+            break
+    
+    #Update xp and yp using fluid velocities in x and y directions
+    xp += valve_point_velocity[0] * dt
+    yp += valve_point_velocity[1] * dt
+
+print(f"Frame {steps+1} | Valve Position: ({xp:.3f}, {yp:.3f}) | Flow Speed: {valve_point_velocity}")
