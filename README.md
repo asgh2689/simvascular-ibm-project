@@ -13,8 +13,8 @@ During graduate school I used SimVascular quite a bit, but it was unable to hand
 - Develop an understanding of the immersed boundary method
 - Review existing FSI approaches
 - Evaluate compatibility with SimVascular
-- Develop a prototype implementation
+- Try to implement IBM into SimVascular (using a plugin?)
 
 ## Current Status
 
-Project planning and literature review.
+Coding and learning
